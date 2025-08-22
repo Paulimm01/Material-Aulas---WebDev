@@ -24,15 +24,28 @@ let posts = [
 window.onload = function() {
     displayPosts();
 
+    document.querySelector("#postList").addEventListener("click", handleclick)
     document.getElementById('postForm').addEventListener('submit', addPost); 
 };
 
+function handleclick(event){
+    console.log(event.target)
+    const action = event.target.dataset.action
+    const index = event.target.dataset.index
+
+    if(action === "Editar"){
+        editarPost(index)
+    }
+    else if(action === "Apagar"){
+        apagarPost(index)
+    }
+}
 // Função para exibir os posts
 function displayPosts() {
     const postList = document.getElementById('postList');
     postList.innerHTML = '';
 
-    posts.forEach(pegaPost => {
+    posts.forEach((pegaPost, indice) => {
             const postElement = document.createElement('div');
             postElement.classList.add('card-post');
   
@@ -41,8 +54,8 @@ function displayPosts() {
                 ${pegaPost.image ? `<img src="${pegaPost.image}" alt="Imagem do post" style="max-width:150px;">` : ""}
                 <p><em>Categoria: ${pegaPost.category}</em></p>
                 <p><em>Data e Hora: ${pegaPost.date}</em></p>
-                <button><i class="fa-solid fa-pen-to-square"></i> Editar</button>
-                <button><i class="fa-solid fa-eraser"></i> Apagar</button>
+                <button data-action="Editar" data-index = "${indice}"><i class="fa-solid fa-pen-to-square"></i> Editar</button>
+                <button data-action="Apagar" data-index = "${indice}"><i class="fa-solid fa-eraser"></i> Apagar</button>
                 <hr style="margin:30px;">`;
                
             postList.append(postElement);
@@ -69,5 +82,22 @@ function addPost(event) {
     
     document.getElementById('postForm').reset();
     
+    displayPosts();
+}
+
+function editarPost(index) {
+    const novoTexto = prompt("Edite o conteúdo do post");
+    posts[index].text = novoTexto;
+
+    displayPosts();
+}
+
+function apagarPost(index) {
+    const confirmar = confirm("Você deseja realmente apagar o post?")
+
+    if(confirmar){
+        posts.splice(index,1);
+    }
+
     displayPosts();
 }
